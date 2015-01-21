@@ -1,6 +1,5 @@
 # Title: Process MBA survey data.
 # 1. Setup
-
 library(psy)
 library(psych)
 library(GPArotation)
@@ -40,30 +39,33 @@ survey2 <- read.csv("data/m42.csv", comment.char='#', stringsAsFactors=F)
 
 titles <- read.csv("data/n42title.csv")
 
-# ReScale likert columns [1,2,3,4,5] to [-2,-1,0,1,2]
-likerts <- setdiff( names(survey),
+# ReScale likert columns [1,2,3,4,5] + shifted to [-2,-1,0,1,2]
+shifted <- -3.
+likertcolumns <- setdiff( names(survey),
   grep("^Gender|^Degree|^PostMBA", names(survey), value=TRUE))
-for (cn2 in likerts) {
-  survey[cn2] <- (survey[cn2] - 3)
+for (cn2 in likertcolumns) {
+  survey[cn2] <- (survey[cn2] +shifted)
 }
 
-outdir <- 'c:/tmp/'
 outdir <- ""
+outdir <- 'c:/tmp/'
 outdir <- 'out/survey42/'
+opcount <- 0
 
 # Process opinion differences on Question
 Opinions <- function(Question,setNo,setYes,outdir="") {
   dlong <- paste(titles$Long[match(Question,titles$Short)])
-  print(sprintf("Processing Opinions: %s No=%d Yes=%d\n",
-    cn2, nrow(setNo), nrow(setYes)))
+  opcount <<- opcount + 1
+  print(sprintf("%d. Processing Opinions: %s No=%d Yes=%d",
+    opcount, cn2, nrow(setNo), nrow(setYes)))
   printcount <- 0
   if (outdir != "") {
     imgfile<-paste(outdir,Question,'.jpg',sep='')
     txtfile<-paste(outdir,Question,".txt",sep="")
     jpeg(imgfile, width=8, height=5, units = 'in', res = 300)
-    sink(txtfile,append=FALSE,split=TRUE)
+    sink(txtfile,append=FALSE,split=FALSE)
   }
-  par(mfcol=c(3,3), oma=c(1,1,0,0), mar=c(1,1,1,0), tcl=-0.1, mgp=c(0,0,0))
+  par(mfcol=c(4,4), oma=c(1,1,0,0), mar=c(1,1,1,0), tcl=-0.1, mgp=c(0,0,0))
   for (cn in names(survey)){
     # print(sprintf("subProcessing: %s with %s\n",cn2, cn))
     if (cn==Question) next
@@ -72,9 +74,12 @@ Opinions <- function(Question,setNo,setYes,outdir="") {
     if (tv$p.value >= .05) next
     printcount <- printcount+1
     # Plot setYes and setNo
+    likerts5 <- "Strong No / No / Neutral / Yes / Strong Yes"
+    likerts3 <- "No/Neutral/Yes"
     plot(density(na.omit(setNo[,cn])), col="red", main="", 
       panel.first = grid(),
-      xlab="Strong No / No / Neutral / Yes / Strong Yes", ylab="density",
+      xlab=likerts5,
+      ylab="density",
       xlim=c(-3,3), ylim=c(0,1), xaxt="n", yaxt="n",lwd=2)
     lines(density(na.omit(setYes[,cn])),col="green",lwd=5,lty=8)
     # Shade the polygons also.
@@ -91,18 +96,32 @@ Opinions <- function(Question,setNo,setYes,outdir="") {
     clong2 <- substr(clong, start=0, stop=50)
     dlong2 <- substr(dlong, start=0, stop=50)
     fmtLegend <- paste(
-      "%d. %s (%s..)\n",
+      "%d.%d. %s (%s..)\n",
       "~ %s (%s..)\n",
       "Red/thin=No %s (%d) m=%3.2f,\n",
       "Green/thick=%s (%d) m=%3.2f",
       sep="")
-    legend("topleft", sprintf(fmtLegend,
-        printcount,
+    fmtLegend2 = sprintf(fmtLegend,
+        opcount,printcount,
         cn,clong2,
         Question, dlong2,
-        Question, nrow(setNo), meanNo,
-        Question, nrow(setYes), meanYes),
-      bty="n")
+        Question, nrow(setNo), meanNo-shifted,
+        Question, nrow(setYes), meanYes-shifted)
+    legend("topleft",fmtLegend2, bty="n", cex=.6, inset=c(0,.0))
+    #
+    perNo <- prop.table(table(factor(setNo[,cn],levels=-2:2)))
+    perYes <- prop.table(table(factor(setYes[,cn],levels=-2:2)))
+    barplot(rbind(perNo,perYes),beside=T,
+      col=c("red","green"), # density=c(60,90),
+      panel.first = grid(),
+      main="",
+      xlab=likerts3,
+      ylab="density",
+      width=c(4,6),
+      ylim=c(0,1), xaxt="n", yaxt="n",lwd=2
+      ) 
+    legend("bottomleft", fmtLegend2, bty="n",cex=.6,inset=c(-.01,.7))
+    box()
     cat(sprintf("%d Different %s pvalue=%f\n",
       printcount, cn, tv$p.value))
     print(tv$estimate)
