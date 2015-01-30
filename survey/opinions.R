@@ -24,7 +24,7 @@ Opinions <- function(Question,setNo,setYes) {
   printcount <- 0
   imgfile<-paste(outdir,Question,'.jpg',sep='')
   txtfile<-paste(outdir,Question,".txt",sep="")
-  jpeg(imgfile, width=8, height=5, units = 'in', res = 300)
+  jpeg(imgfile, width=8, height=5, units = 'in', res = 600)
   par(mfcol=c(4,4), oma=c(1,1,0,0), mar=c(1,1,1,0), tcl=-0.1, mgp=c(0,0,0))
   sink(txtfile,append=FALSE,split=TRUE)
   print(sprintf("Processing: %s\n",cn2))
@@ -40,6 +40,7 @@ Opinions <- function(Question,setNo,setYes) {
     plot(density(setNo[,cn]),col="red", main="",
       xlab=likerts5,
       ylab="density",
+      cex.lab=0.6,
       xlim=c(0,6), ylim=c(0,1), xaxt="n", yaxt="n",lwd=2)
     lines(density(setYes[,cn]),col="green",lwd=5)
     # Shade the polygons also.
@@ -57,15 +58,16 @@ Opinions <- function(Question,setNo,setYes) {
     fmtLegend <- paste(
       "%d.%d. %s (%s..)\n",
       "~ %s (%s..)\n",
-      "Red/thin=No %s (%d) m=%3.2f,\n",
-      "Green/thick=%s (%d) m=%3.2f",
+      "Red/thin=No %s (%d) %s=%3.2f,\n",
+      "Green/thick=%s (%d) %s=%3.2f",
       sep="")
+    unicode_mu <- "\u03BC"
     fmtLegend2 <- sprintf(fmtLegend,
         opcount, printcount,
         cn,clong2,
         Question, dlong2,
-        Question, nrow(setNo), meanNo,
-        Question, nrow(setYes), meanYes)
+        Question, nrow(setNo),  unicode_mu, meanNo,
+        Question, nrow(setYes), unicode_mu, meanYes)
     legend("topleft", fmtLegend2, bty="n", cex=0.6) 
     #
     perNo <- prop.table(table(factor(setNo[,cn],levels=1:5)))
@@ -76,6 +78,7 @@ Opinions <- function(Question,setNo,setYes) {
       main="",
       xlab=likerts3,
       ylab="density",
+      cex.lab=0.6,
       width=c(4,6),
       ylim=c(0,1), xaxt="n", yaxt="n",lwd=2
       ) 

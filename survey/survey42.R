@@ -47,6 +47,7 @@ for (cn2 in likertcolumns) {
   survey[cn2] <- (survey[cn2] +shifted)
 }
 
+# Output
 outdir <- ""
 outdir <- 'c:/tmp/'
 outdir <- 'out/survey42/'
@@ -62,10 +63,10 @@ Opinions <- function(Question,setNo,setYes,outdir="") {
   if (outdir != "") {
     imgfile<-paste(outdir,Question,'.jpg',sep='')
     txtfile<-paste(outdir,Question,".txt",sep="")
-    jpeg(imgfile, width=8, height=5, units = 'in', res = 300)
+    jpeg(imgfile, width=8, height=5, units='in', res=600)
     sink(txtfile,append=FALSE,split=FALSE)
   }
-  par(mfcol=c(4,4), oma=c(1,1,0,0), mar=c(1,1,1,0), tcl=-0.1, mgp=c(0,0,0))
+  par(mfcol=c(6,8), oma=c(1,1,0,0), mar=c(1,1,1,0), tcl=-0.1, mgp=c(0,0,0))
   for (cn in names(survey)){
     # print(sprintf("subProcessing: %s with %s\n",cn2, cn))
     if (cn==Question) next
@@ -73,13 +74,37 @@ Opinions <- function(Question,setNo,setYes,outdir="") {
     tv <- t.test(setNo[cn], setYes[cn], var.equal=T)
     if (tv$p.value >= .05) next
     printcount <- printcount+1
-    # Plot setYes and setNo
-    likerts5 <- "Strong No / No / Neutral / Yes / Strong Yes"
-    likerts3 <- "No/Neutral/Yes"
+    # Data
+    meanNo <- mean(setNo[,cn])
+    meanYes <- mean(setYes[,cn])
+    perNo <- prop.table(table(factor(setNo[,cn],levels=-2:2)))
+    perYes <- prop.table(table(factor(setYes[,cn],levels=-2:2)))
+    # Labels
+    clong <- paste(titles$Long[match(cn,titles$Short)])
+    clong2 <- substr(clong, start=0, stop=50)
+    dlong2 <- substr(dlong, start=0, stop=50)
+    fmtLegend <- paste(
+      "%d.%d. %s (%s..)\n",
+      "~ %s (%s..)\n",
+      "Red/thin=No %s (%d) %s=%3.2f,\n",
+      "Green/thick=%s (%d) %s=%3.2f",
+      sep="")
+    unicode_mu <- "\u03BC"
+    fmtLegend2 <- sprintf(fmtLegend,
+        opcount,printcount,
+        cn,clong2,
+        Question, dlong2,
+        Question, nrow(setNo),  unicode_mu, meanNo-shifted,
+        Question, nrow(setYes), unicode_mu, meanYes-shifted)
+    # ==================================================
+    # 1. Plot setYes and setNo
+    likerts5 <- sprintf("Strong No / No / Neutral / Yes / Strong Yes\n%s", cn)
+    ylab2 <- sprintf("%s, No vs Yes density", cn2)
     plot(density(na.omit(setNo[,cn])), col="red", main="", 
-      panel.first = grid(),
+      # panel.first=grid(),
       xlab=likerts5,
-      ylab="density",
+      cex.lab=0.4,
+      ylab=ylab2,
       xlim=c(-3,3), ylim=c(0,1), xaxt="n", yaxt="n",lwd=2)
     lines(density(na.omit(setYes[,cn])),col="green",lwd=5,lty=8)
     # Shade the polygons also.
@@ -88,39 +113,31 @@ Opinions <- function(Question,setNo,setYes,outdir="") {
     polygon(density(na.omit(setNo[,cn])), density=-1, col=redTrans)
     polygon(density(na.omit(setYes[,cn])), density=-1, col=greenTrans)
     # More lines.
-    meanNo <- mean(setNo[,cn])
-    meanYes <- mean(setYes[,cn])
     lines( x=c(meanNo,meanNo), y=c(0,.5), col="red")
     lines( x=c(meanYes,meanYes), y=c(0,.5), col="green")
-    clong <- paste(titles$Long[match(cn,titles$Short)])
-    clong2 <- substr(clong, start=0, stop=50)
-    dlong2 <- substr(dlong, start=0, stop=50)
-    fmtLegend <- paste(
-      "%d.%d. %s (%s..)\n",
-      "~ %s (%s..)\n",
-      "Red/thin=No %s (%d) m=%3.2f,\n",
-      "Green/thick=%s (%d) m=%3.2f",
-      sep="")
-    fmtLegend2 = sprintf(fmtLegend,
-        opcount,printcount,
-        cn,clong2,
-        Question, dlong2,
-        Question, nrow(setNo), meanNo-shifted,
-        Question, nrow(setYes), meanYes-shifted)
-    legend("topleft",fmtLegend2, bty="n", cex=.6, inset=c(0,.0))
-    #
-    perNo <- prop.table(table(factor(setNo[,cn],levels=-2:2)))
-    perYes <- prop.table(table(factor(setYes[,cn],levels=-2:2)))
+    legend("topleft",fmtLegend2, bty="n", cex=.4, inset=c(-0.05,-.1))
+    # ==================================================
+    # 2. Box plot
+    boxplot(setNo[,cn],setYes[,cn], names=c("Males","Females"), 
+      col=(c(redTrans,greenTrans)),
+      xaxt="n", xlab=likerts5, cex.lab=0.4,
+      yaxt="n", ylab=sprintf("%s (No vs Yes)", cn2, cn2),
+      horizontal=T,
+      cex.main=0.4,
+      main=sprintf("%s ~ %s", cn, cn2)
+      )
+    # ==================================================
+    # 3. Bar plot
     barplot(rbind(perNo,perYes),beside=T,
       col=c("red","green"), # density=c(60,90),
-      panel.first = grid(),
+      # panel.first=grid(),
       main="",
-      xlab=likerts3,
-      ylab="density",
+      xaxt="n", xlab=likerts5, cex.lab=0.4,
+      ylab=ylab2,
       width=c(4,6),
-      ylim=c(0,1), xaxt="n", yaxt="n",lwd=2
+      ylim=c(0,1), yaxt="n",lwd=2
       ) 
-    legend("bottomleft", fmtLegend2, bty="n",cex=.6,inset=c(-.01,.7))
+    legend("bottomleft", fmtLegend2, bty="n",cex=.4,inset=c(-.06,.7))
     box()
     cat(sprintf("%d Different %s pvalue=%f\n",
       printcount, cn, tv$p.value))

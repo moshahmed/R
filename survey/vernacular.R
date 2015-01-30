@@ -28,7 +28,7 @@ Opinions <- function(Question,setNo,setYes) {
   printcount <- 0
   imgfile<-paste(outdir,Question,'.jpg',sep='')
   txtfile<-paste(outdir,Question,".txt",sep="")
-  jpeg(imgfile, width=8, height=5, units = 'in', res = 300)
+  jpeg(imgfile, width=8, height=5, units = 'in', res = 600)
   sink(txtfile,append=FALSE,split=TRUE)
   par(mfcol=c(4,4), oma=c(1,1,0,0), mar=c(1,1,1,0), tcl=-0.1, mgp=c(0,0,0))
   for (cn in names(survey)){
@@ -53,12 +53,14 @@ Opinions <- function(Question,setNo,setYes) {
       xlab1 <- "Male / Female "
       xlim1 <- c(-1,2)
     }
+    ylab2 <- sprintf("%s, No vs Yes density", Question)
     # Plot No=red, Yes=green.
     plot(density(setNo[,cn]),col="red", main="",
-      panel.first = grid(),
+      #panel.first = grid(),
       xlab=xlab1,
-      ylab="density",
+      ylab=ylab2,
       xlim=xlim1,
+      cex.lab=0.6,
       ylim=c(0,1.1), xaxt="n", yaxt="n",lwd=2)
     lines(density(setYes[,cn]),col="green",lwd=5,lty=8)
     # Shade the polygons also.
@@ -70,16 +72,17 @@ Opinions <- function(Question,setNo,setYes) {
     clong <- paste(titles$Long[match(cn,titles$Short)])
     clong2 <- substr(clong, start=0, stop=50)
     dlong2 <- substr(dlong, start=0, stop=50)
+    unicode_mu <- "\u03BC"
     fmtLegend2 <- sprintf(paste("%d. %s (%s..)\n",
           "~ %s (%s..)\n",
-          "Red/thin=No %s (%d) m=%3.2f,\n",
-          "Green/thick=%s (%d) m=%3.2f",
+          "Red/thin=No %s (%d) %s=%3.2f,\n",
+          "Green/thick=%s (%d) %s=%3.2f",
           sep=""),
         printcount, cn,clong2,
         Question, dlong2,
-        Question, nrow(setNo), meanNo,
-        Question, nrow(setYes), meanYes)
-    legend("topleft", fmtLegend2, bty="n") 
+        Question, nrow(setNo),  unicode_mu, meanNo,
+        Question, nrow(setYes), unicode_mu, meanYes)
+    legend("topleft", fmtLegend2, bty="n", cex=0.6) 
     # Draw the mean, No=red, Yes=green
     lines( x=c(meanNo,meanNo), y=c(0,.5), col="red")
     lines( x=c(meanYes,meanYes), y=c(0,.5), col="green")
@@ -90,13 +93,17 @@ Opinions <- function(Question,setNo,setYes) {
       perNo <- prop.table(table(factor(setNo[,cn],levels=0:1)))
       perYes <- prop.table(table(factor(setYes[,cn],levels=0:1)))
     }
+    red2   <- rgb(1 ,.1,.1,0.7)
+    green2 <- rgb(.1,1 ,.1,0.7)
     barplot(rbind(perNo,perYes),beside=T,
-      col=c("red","green"), # density=c(60,90),
-      panel.first = grid(),
+      col=c(red2,green2),
+      #panel.first = grid(),
       main="",
       xlab=xlab1,
-      ylab="density",
+      ylab=ylab2,
+      cex.lab=0.6,
       width=c(4,6),
+      angle=c(10,20), density=c(80,80), # Slow rendering
       ylim=c(0,1), xaxt="n", yaxt="n",lwd=2
       ) 
     legend("bottomleft", fmtLegend2, bty="n",cex=.6,inset=c(-.01,.7))
