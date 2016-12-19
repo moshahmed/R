@@ -1,0 +1,171 @@
+# What: Fibonacci Sequence in R with Memoization, December 7, 2014 By adamleerich
+# https://www.r-bloggers.com/fibonacci-sequence-in-r-with-memoization/
+# 2016-09-24
+
+
+# (This article was first published on TeachR, and kindly contributed to R-bloggers)
+
+# This is in response to Andrew Z's post on R-Bloggers Friday about using
+# recursion to calculate numbers in the Fibonacci sequence.
+# http://heuristicandrew.blogspot.com/2014/12/fibonacci-sequence-in-r-and-sas.html
+
+# I've re-written the author's Fibonacci function here. The only really
+# change is that this one is extended to negative integers.
+
+fib <- function(n) {
+ 
+    # Handle "vectors" by element
+    if (length(n) > 1) {
+        return(sapply(n, fib))
+    }
+ 
+    # Base cases
+    if (n == 0) 
+        return(0)
+    if (n == 1) 
+        return(1)
+ 
+    # Check to see if n is an integer Do not use is.integer as that is very
+    # strict
+    if (round(n, 0) != n) 
+        return(NA)
+ 
+    # Negative numbers
+    if (n < 0) 
+        return(fib(-1 * n) * ((-1)^((n + 1)%%2)))
+ 
+    # Everything else
+    return(fib(n - 1) + fib(n - 2))
+ 
+}
+
+# This is a great example of recursion, but not very useful in practice.
+# It is pretty slow because it has to go to the base case several times
+# for every top-level call.
+
+system.time(fib(20))
+##    user  system elapsed 
+##    0.19    0.00    0.19
+system.time(fib(25))
+##    user  system elapsed 
+##    1.54    0.00    1.54
+system.time(fib(30))
+##    user  system elapsed 
+##   15.98    0.00   15.97
+
+# Using fib to calculate Fibonacci numbers over 10 is really just too
+# slow. This function is a perfect candidate for memoization. The memoise
+# package is great for this, but gets tricky when the function being
+# memoized is recursive. This example uses the principles of the memoise
+# package and even steals a little code.
+
+fibM <- (function() {
+ 
+    # The code here related to the cache *mostly* comes from the memoise
+    # package's object new_cache.
+ 
+    cache <- NULL
+ 
+    cache_reset <- function() {
+        cache <<- new.env(TRUE, emptyenv())
+        cache_set('0', 0)
+        cache_set('1', 1)
+    }
+ 
+    cache_set <- function(key, value) {
+        assign(key, value, envir = cache)
+    }
+ 
+    cache_get <- function(key) {
+        get(key, envir = cache, inherits = FALSE)
+    }
+ 
+    cache_has_key <- function(key) {
+        exists(key, envir = cache, inherits = FALSE)
+    }
+ 
+    # Initialize the cache
+    cache_reset()
+ 
+ 
+    # This is the function that gets returned by the anonymous function and
+    # becomes fibM.
+
+    function(n) {
+ 
+        nc <- as.character(n)
+ 
+        # Handle "vectors" by element
+        if (length(n) > 1) {
+            return(sapply(n, fibM))
+        }
+ 
+        # Check to see if n is an integer Do not use is.integer as that is very
+        # strict
+        if (round(n, 0) != n) 
+            return(NA)
+ 
+        # Cached cases
+        if (cache_has_key(nc)) 
+            return(cache_get(nc))
+ 
+        # Negative numbers
+        if (n < 0) 
+            return(fibM(-1 * n) * ((-1)^((n + 1)%%2)))
+ 
+        # Everything else
+        out <- fibM(n - 1) + fibM(n - 2)
+        cache_set(nc, out)
+        return(out)
+ 
+    }
+ 
+})()
+
+# This function demonstrates the use of memoization and using an anonymous
+# function to create a closure. I wrote it this way so that the cache
+# appears to be embedded in the function instead of leaving it in the
+# Global Environment. This keeps it 'safe' and promotes tidiness.
+# 
+# Every time you call fibM, whether at the top level or through recursion,
+# it checks its cache to see if it has already solved this problem. If
+# it has it just returns the result. If not, it solves it and stores the
+# answer in the cache for later use.
+# 
+# Before it has been called the first time the cache is empty except for
+# the 'seed' values.
+
+ls(environment(fibM)$cache)
+## [1] '0' '1'
+Call it once and see how fast it fills up.
+
+fibM(30)
+## [1] 832040
+ls(environment(fibM)$cache)
+##  [1] '0'  '1'  '10' '11' '12' '13' '14' '15' '16' '17' '18' '19' '2'  '20'
+## [15] '21' '22' '23' '24' '25' '26' '27' '28' '29' '3'  '30' '4'  '5'  '6' 
+## [29] '7'  '8'  '9'
+
+# Even on the first run this is faster than fib but that speed improvement
+# intensifies once the cache starts to fill up.
+
+# To demonstrate, I will clear the cache first.
+
+environment(fibM)$cache_reset()
+ls(environment(fibM)$cache)
+## [1] '0' '1'
+
+# Now for some speed tests.
+
+nums <- -25:25
+ 
+system.time(res.fib <- fib(nums))
+##    user  system elapsed 
+##    7.11    0.00    7.11
+system.time(res.fibM.1 <- fibM(nums))
+##    user  system elapsed 
+##       0       0       0
+system.time(res.fibM.2 <- fibM(nums))
+##    user  system elapsed 
+##       0       0       0
+
