@@ -6,7 +6,7 @@
 # bigtxt is "Gutenberg EBook of The Adventures of Sherlock Holmes"
 bigtxt <-  "http://www.norvig.com/big.txt"
 bigtxt <-  "c:/doc3/algo/misc/spell-norvig/big.txt"
-bigtxt <-  ".big.txt"
+bigtxt <-  "big.txt"
 
 # Read in big.txt, a 6.5 mb collection of different English texts.
 raw_text <- paste(readLines(bigtxt), collapse = " ")
