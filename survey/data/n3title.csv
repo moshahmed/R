@@ -1,0 +1,56 @@
+QNum,Short,Long
+Q.01,Reading,Reading is important for MBA
+Q.02,SleepRead,I sleep late and read at night
+Q.03,Confident,I can change the world with my work
+Q.04,Chivalry,In a full bus; a boy should give seat to a girl standing?
+Q.05,MaleDominated,MBA is more important for boys; because they must get a job and support the family?
+Q.06,MaleChauvanist,Boys do better in Math than girls
+Q.07,ExamMult,Multiple choice exams are easier than essay exams
+Q.08,ExamExt,External exams are better than internal exams?
+Q.09,ReadComics,Reading comics helps in MBA comprehension
+Q.10,JobNoWorry,No matter what marks I get; placement is guaranteed
+Q.11,JobByCollege,It is the college's responsibility to do placements.
+Q.12,Inquisitive,We should ask more questions in class
+Q.13,Debate,Seminars must include debate at the end
+Q.14,WriteNotes,We must write notes in all classes
+Q.15,ClassTooMany,We have too many classes and not enough time to think
+Q.16,BigWeekend,Saturdays should be holiday so we can go home
+Q.17,TeacherListen,We can talk to teacher anytime during office timings
+Q.18,NotMarks,I worry about placements more than marks
+Q.19,GrpStudy,I study in a group after college hours
+Q.20,TeachersEq,We are treated equally by college/teachers
+Q.21,ActivityTooMany,There are too many activities and not enough interesting course material
+Q.22,Conservative,Our college needs to be more liberal
+Q.23,TechNeeded,Our course material is outdated; we need modern technology like tablets to learn.
+Q.24,OldDrs,Dress code in college is old fashioned
+Q.25,ENews,I read google news every morning
+Q.26,PeerPres,I learn best from fellow student presentations.
+Q.27,TeacherPest,Teachers don't listen to us; they think we are trouble
+Q.28,EngLit,English Literature should be taught in MBA
+Q.29,EnglishJob,Speaking English is necessary for placements
+Q.30,Listening,Listening is more important than speaking English
+Q.31,Writing,Writing is more important than reading
+Q.32,ActivityOpt,Extra curricular activities must be optional
+Q.33,Gender,My gender (Boy=0;Girl=1)
+Q.34,PostMBA,My dream during MBA (Pass=0;Job=3;Business=5)
+Q.35,ClassBig,I like big classes
+Q.36,Vernacular,I studied in my mother tongue (Kannada; Tulu; Konkani; etc)
+Q.37,TownSmall,I grew up in a small town like Karkala
+Q.38,FriendsMany,I have lots of Friends in college
+Q.39,FriendsTrue,College friends are true friends
+Q.40,Movies,I love watching movies after classes to relax
+Q.41,StudiesHigher,I want to study more after MBA
+Q.42,ExcelExpert,I know Excel well
+Q.43,Blogger,I write a blog
+Q.44,Webpage,I have a web page
+Q.45,WriteDiary,I write a diary to organize my thoughts
+Q.46,Meditate,I meditate to calm my mind and focus attention
+Q.47,Hobbies,I have hobbies outside of studies to keep me busy
+Q.48,MBASad,MBA is depressing
+Q.49,MBAHappy,MBA classes give me joy and hope
+Q.50,FoodHealthy,I eat healthy food in NITTE
+Q.51,SpkEmpowered,I spoke on stage and it was empowering
+Q.52,TeacherEmpower,Teachers empower me to do great things
+Q.53,ProudParent,My parents are more proud of my MBA than me.
+Q.54,ProudI,I am proud to be learning MBA
+Q.55,Degree,Before MBA; I studied (BCom.2;BBM=3;BSc=4;Engg=5)

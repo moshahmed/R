@@ -48,9 +48,9 @@ for (cn2 in likertcolumns) {
 }
 
 # Output
-outdir <- ""
-outdir <- 'c:/tmp/'
-outdir <- 'out/survey42/'
+outdir <- "./"
+# outdir <- 'c:/tmp/'
+# outdir <- 'out/survey42/'
 opcount <- 0
 
 # Process opinion differences on Question

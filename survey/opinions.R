@@ -12,7 +12,9 @@ options(digits=3) # Easy to read precision.
 setwd(dirname(sys.frame(1)$ofile)) 
 survey <- read.csv("data/n3.csv")
 titles <- read.csv("data/n3title.csv")
-outdir <- 'out/opinions/'
+
+# outdir <- 'out/opinions/'
+outdir <- ''
 opcount <- 0
 
 # Process opinion differences on Question

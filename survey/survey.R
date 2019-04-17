@@ -26,8 +26,8 @@ titles <- read.csv("data/n3title.csv")
 # titles$QNum <-NULL # Question number not needed.
 
 # For printing output.
-outdir <- ''
-outdir <- 'out/survey/'
+# outdir <- 'out/survey/'
+outdir <- './'
 
 do_slow=F
 

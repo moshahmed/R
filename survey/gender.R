@@ -20,13 +20,13 @@ colors  <- c("red", "yellow", "green", "violet",
  
 # Read the survey data csv into R.
 # setwd(dirname(sys.frame(1)$ofile))
-setwd("c:/mosh/stats-r/survey/")
+# setwd("c:/mosh/stats-r/survey/")
 survey <- read.csv("data/n3.csv")
 titles <- read.csv("data/n3title.csv")
 
 # Output
-outdir <- ''
-outdir <- 'out/gender/'
+# outdir <- 'out/gender/'
+outdir <- './'
 
 Question<-'Gender-Cat'
 printcount <- 0

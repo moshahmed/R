@@ -1,0 +1,13 @@
+C01, Demographics
+C02, Reading and Writing
+C03, Speaking and Listening
+C04, Study Material
+C05, Technology Tools
+C06, Learning Methods
+C07, Exams
+C08, Time Management
+C09, Confidence
+C10, Placements
+C11, Teachers
+C12, Lifestyle and Health
+C13, Gender Equality

@@ -21,7 +21,8 @@ setwd(dirname(sys.frame(1)$ofile))
 survey <- read.csv("data/n3.csv")
 titles <- read.csv("data/n3title.csv")
 
-outdir <- 'out/vernacular/'
+# outdir <- 'out/vernacular/'
+outdir <- './'
 
 Opinions <- function(Question,setNo,setYes) {
   # Differences in opinion between Question
