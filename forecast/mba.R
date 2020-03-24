@@ -1,4 +1,6 @@
 # R program to analyse Google trends forecast data.
+# GPL(C) moshahmed_at_gmail
+
 library(xts) # Extended Time Series.
 library(TTR) # Technical Trading Rules.
 

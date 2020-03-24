@@ -1,6 +1,7 @@
 # Example on how to process google trends forecast data in R.
 # Data correlates the query 'diwali' with queries -2 months before.
 # 2014-08-16 Sat 05:44
+# GPL(C) moshahmed_at_gmail
 
 library(xts)
 library(TTR)
