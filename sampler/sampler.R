@@ -1,4 +1,5 @@
 # What: Randomly pick N students; use for making groups and questions.
+# GPL(C) moshahmed_at_gmail
 students <- read.csv("sampler.csv", stringsAsFactors=F)
 # View(students)
 

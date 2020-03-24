@@ -1,4 +1,6 @@
 # What: Randomly pick count rows from each section; to make groups.
+# GPL(C) moshahmed_at_gmail
+
 count <-4
 sections <- "ABC" # grep regexp on S.No.
 file <- "sampler.csv"
