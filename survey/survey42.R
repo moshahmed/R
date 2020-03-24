@@ -1,4 +1,5 @@
 # Title: Process MBA survey data.
+# GPL(C) moshahmed_at_gmail
 # 1. Setup
 library(psy)
 library(psych)
